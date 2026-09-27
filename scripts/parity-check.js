@@ -61,6 +61,7 @@ const dataPaths = [
   "public/data/countries.json",
   "public/1/data/countries.json",
   "public/2/data/countries.json",
+  "public/3/data/countries.json",
 ];
 const fails = [];
 let numbers = null;
@@ -75,9 +76,10 @@ for (const dp of dataPaths) {
 
 fails.push(...assertHtml("public/1/index.html"));
 fails.push(...assertHtml("public/2/index.html"));
+fails.push(...assertHtml("public/3/index.html"));
 
 const chooser = fs.readFileSync(path.join(root, "public/index.html"), "utf8");
-if (!chooser.includes('href="/1/"') || !chooser.includes('href="/2/"')) fails.push("chooser missing /1 /2 links");
+if (!chooser.includes('href="/1/"') || !chooser.includes('href="/2/"') || !chooser.includes('href="/3/"')) fails.push("chooser missing /1 /2 /3 links");
 if (!/noindex/i.test(chooser)) fails.push("chooser missing noindex");
 
 const wrangler = fs.readFileSync(path.join(root, "wrangler.jsonc"), "utf8");
@@ -85,10 +87,19 @@ if (!/"name":\s*"kingindex-v2"/.test(wrangler)) fails.push("wrangler name must b
 if (/"name":\s*"ppp-index-calculator"/.test(wrangler)) fails.push("wrangler name must not be ppp-index-calculator");
 if (!/v2\.kingindex\.tanishqnalloju\.com/.test(wrangler)) fails.push("missing custom_domain host");
 
+
+const html3 = fs.readFileSync(path.join(root, "public/3/index.html"), "utf8");
+if (!/kingindex-v2-3-theme/.test(html3)) fails.push("/3: missing theme key");
+if (/themeSelect|Light \| Dark \| System|segmented/.test(html3) && /id="themeSelect"/.test(html3)) fails.push("/3: must not ship themeSelect system UI");
+if (!/id="themeToggle"/.test(html3)) fails.push("/3: missing themeToggle");
+if (!/ppp\.tanishqnalloju\.com/.test(html3)) fails.push("/3: missing PPP Calculator link");
+if (!/Phosphor|oscilloscope|scope/i.test(html3)) fails.push("/3: missing phosphor scope chrome");
+if (!fs.existsSync(path.join(root, "public/3/scope.js"))) fails.push("/3: missing scope.js");
+
 if (fails.length) {
   console.error("FAIL");
   fails.forEach(f => console.error(" -", f));
   process.exit(1);
 }
 console.log("PASS");
-console.log({ expected: EXPECTED, got: numbers, paths: ["/1/", "/2/"] });
+console.log({ expected: EXPECTED, got: numbers, paths: ["/1/", "/2/", "/3/"] });
