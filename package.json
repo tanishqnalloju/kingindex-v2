@@ -1,0 +1,15 @@
+{
+  "name": "kingindex-v2",
+  "version": "2.0.0",
+  "private": true,
+  "description": "KingIndex v2 staging — Alternative (/1) and Improved (/2) previews. Production apex stays frozen.",
+  "scripts": {
+    "parity": "node scripts/parity-check.js",
+    "deploy": "npx wrangler deploy",
+    "dev": "npx wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.34.0"
+  },
+  "license": "MIT"
+}

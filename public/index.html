@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KingIndex v2 staging</title>
+<meta name="robots" content="noindex, follow" />
+<link rel="canonical" href="https://kingindex.tanishqnalloju.com/" />
+<meta name="description" content="KingIndex v2 staging chooser. Production remains at kingindex.tanishqnalloju.com." />
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f7f6f3;
+    --ink: #1a1a18;
+    --muted: #6b6a64;
+    --line: #e6e4de;
+    --panel: #ffffff;
+    --accent: #1f5c56;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12110f;
+      --ink: #eceae4;
+      --muted: #9a978e;
+      --line: #2a2824;
+      --panel: #1a1916;
+      --accent: #5fb3a9;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 48px 24px 64px; min-height: 100dvh; }
+  .eyebrow { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin: 0 0 10px; }
+  h1 { margin: 0 0 8px; font-size: clamp(1.75rem, 4vw, 2.25rem); letter-spacing: -0.03em; font-weight: 700; line-height: 1.15; }
+  .lede { color: var(--muted); font-size: 1rem; line-height: 1.55; margin: 0 0 28px; max-width: 42ch; }
+  .grid { display: grid; gap: 12px; }
+  a.card {
+    display: block; text-decoration: none; color: inherit;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    padding: 20px 22px; transition: border-color 200ms ease, transform 160ms ease;
+  }
+  a.card:hover { border-color: var(--accent); transform: translateY(-1px); }
+  a.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  a.card:active { transform: scale(0.99); }
+  .card .path { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 0.78rem; color: var(--accent); font-weight: 600; margin: 0 0 6px; }
+  .card h2 { margin: 0 0 6px; font-size: 1.15rem; letter-spacing: -0.02em; }
+  .card p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+  .note { margin-top: 28px; font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+  .note a { color: var(--accent); }
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <p class="eyebrow">Staging · noindex</p>
+    <h1>KingIndex v2</h1>
+    <p class="lede">Two staging builds of the same calculator. Math and data match production. Visual systems differ.</p>
+    <div class="grid">
+      <a class="card" href="/1/">
+        <div class="path">/1</div>
+        <h2>Alternative</h2>
+        <p>Same functionality, editorial lab visual system. Instrument layout, not a dashboard twin.</p>
+      </a>
+      <a class="card" href="/2/">
+        <div class="path">/2</div>
+        <h2>Improved</h2>
+        <p>Production IA and chrome, with redesign-audit fixes: type, theme, contrast, skip-link, dark quality.</p>
+      </a>
+    </div>
+    <p class="note">Production (frozen): <a href="https://kingindex.tanishqnalloju.com/">kingindex.tanishqnalloju.com</a>. This host is staging only.</p>
+  </main>
+</body>
+</html>
