@@ -155,183 +155,176 @@
   .skip-link:focus, .skip-link:focus-visible { left: 0; outline: 3px solid var(--hero); outline-offset: 2px; }
   .wrap { max-width: 1180px; margin: 0 auto; padding: 20px 22px 56px; position: relative; z-index: 1; }
 
-  /* Atmosphere: MOTION 7 ambient — claimed travel matches shown travel */
+  /* Atmosphere: GSAP-driven MOTION 7 — static structure; motion in atmosphere.js */
   .atmosphere {
     position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
   }
-  .atmosphere .orb {
-    position: absolute; border-radius: 50%; filter: blur(52px);
+  .atmosphere .atm-wash {
+    position: absolute; inset: 0;
+    background: var(--bg);
+  }
+  [data-theme="dark"] .atmosphere .atm-wash {
+    background:
+      radial-gradient(120% 80% at 50% -10%, #353b49 0%, transparent 55%),
+      linear-gradient(180deg, #292e39 0%, #252a34 100%);
+  }
+  [data-theme="light"] .atmosphere .atm-wash {
+    background:
+      radial-gradient(120% 80% at 50% -10%, #f1eee6 0%, transparent 55%),
+      linear-gradient(180deg, #f7f5f0 0%, #f3f0e8 100%);
+  }
+  .atmosphere .atm-lights {
+    position: absolute; inset: 0;
+  }
+  .atmosphere .atm-light {
+    position: absolute;
+    border-radius: 50%;
     will-change: transform, opacity;
-    animation: orb-drift var(--dur, 16s) ease-in-out infinite alternate;
+    filter: blur(44px);
   }
-  .atmosphere .orb-a {
-    width: min(56vw, 560px); height: min(56vw, 560px);
-    top: -14%; left: -10%;
-    background: radial-gradient(circle, rgba(136, 192, 208, 0.58), rgba(136, 192, 208, 0.12) 52%, transparent 72%);
-    --dur: 14s; animation-delay: -3s;
+  .atmosphere .atm-light-a {
+    width: min(58vw, 580px); height: min(58vw, 580px);
+    top: -16%; left: -12%;
+    background:
+      conic-gradient(from 210deg at 40% 45%,
+        rgba(136, 192, 208, 0.55),
+        rgba(147, 224, 208, 0.28),
+        rgba(136, 192, 208, 0.08),
+        rgba(136, 192, 208, 0.55));
+    opacity: 0.85;
   }
-  .atmosphere .orb-b {
+  .atmosphere .atm-light-b {
     width: min(48vw, 480px); height: min(48vw, 480px);
-    top: 24%; right: -12%;
-    background: radial-gradient(circle, rgba(178, 216, 154, 0.48), rgba(163, 190, 140, 0.1) 55%, transparent 74%);
-    --dur: 17s; animation-delay: -8s;
+    top: 28%; right: -14%;
+    background:
+      radial-gradient(circle at 45% 40%,
+        rgba(178, 216, 154, 0.52) 0%,
+        rgba(163, 190, 140, 0.18) 45%,
+        transparent 72%);
+    opacity: 0.78;
+    filter: blur(40px);
   }
-  .atmosphere .orb-c {
-    width: min(42vw, 420px); height: min(42vw, 420px);
-    bottom: -10%; left: 22%;
-    background: radial-gradient(circle, rgba(235, 203, 139, 0.38), rgba(235, 203, 139, 0.08) 55%, transparent 74%);
-    --dur: 19s; animation-delay: -12s;
+  .atmosphere .atm-light-c {
+    width: min(40vw, 400px); height: min(40vw, 400px);
+    bottom: -12%; left: 28%;
+    background:
+      radial-gradient(circle at 50% 50%,
+        rgba(235, 203, 139, 0.42) 0%,
+        rgba(235, 203, 139, 0.12) 48%,
+        transparent 74%);
+    opacity: 0.7;
+    filter: blur(42px);
   }
-  .atmosphere .orb-d {
-    width: min(34vw, 340px); height: min(34vw, 340px);
-    top: 52%; left: 6%;
-    background: radial-gradient(circle, rgba(147, 224, 208, 0.46), rgba(143, 188, 187, 0.1) 55%, transparent 72%);
-    --dur: 15s; animation-delay: -5s;
+  [data-theme="light"] .atmosphere .atm-light-a {
+    background:
+      conic-gradient(from 210deg at 40% 45%,
+        rgba(31, 92, 86, 0.28),
+        rgba(38, 110, 103, 0.14),
+        rgba(31, 92, 86, 0.05),
+        rgba(31, 92, 86, 0.28));
+    opacity: 0.72;
   }
-  .atmosphere .orb-e {
-    width: min(28vw, 280px); height: min(28vw, 280px);
-    top: 8%; left: 42%;
-    background: radial-gradient(circle, rgba(136, 192, 208, 0.36), rgba(147, 224, 208, 0.08) 50%, transparent 70%);
-    --dur: 13s; animation-delay: -1s; filter: blur(48px);
+  [data-theme="light"] .atmosphere .atm-light-b {
+    background:
+      radial-gradient(circle at 45% 40%,
+        rgba(138, 106, 26, 0.22) 0%,
+        rgba(138, 106, 26, 0.08) 45%,
+        transparent 72%);
+    opacity: 0.62;
   }
-  .atmosphere .depth-grid {
-    position: absolute; inset: -10% -5% 20%;
-    perspective: 720px; transform-style: preserve-3d;
-    --grid-op-lo: 0.2;
-    --grid-op-hi: 0.32;
-    opacity: var(--grid-op-lo);
-    animation: grid-pulse 20s ease-in-out infinite alternate;
+  [data-theme="light"] .atmosphere .atm-light-c {
+    background:
+      radial-gradient(circle at 50% 50%,
+        rgba(31, 92, 86, 0.16) 0%,
+        rgba(31, 92, 86, 0.05) 48%,
+        transparent 74%);
+    opacity: 0.55;
+  }
+  .atmosphere .atm-depth {
+    position: absolute; inset: -8% -4% 18%;
+    perspective: 780px;
+    transform-style: preserve-3d;
+    opacity: 0.28;
     will-change: transform, opacity;
+    color: #88C0D0;
   }
-  .atmosphere .depth-grid svg {
+  .atmosphere .atm-depth svg {
     width: 100%; height: 100%;
-    transform: rotateX(58deg) translateY(-8%) scale(1.35);
+    transform: rotateX(58deg) translateY(-6%) scale(1.32);
     transform-origin: 50% 0%;
   }
-  .atmosphere .wire {
-    position: absolute; width: 132px; height: 132px;
-    border: 1px dashed rgba(136, 192, 208, 0.5);
+  [data-theme="light"] .atmosphere .atm-depth {
+    opacity: 0.12;
+    color: #1f5c56;
+  }
+  .atmosphere .atm-vignette {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 85% 70% at 50% 45%, transparent 40%, rgba(41, 46, 57, 0.45) 100%);
+    opacity: 0.55;
+    will-change: opacity;
+  }
+  [data-theme="light"] .atmosphere .atm-vignette {
+    background:
+      radial-gradient(ellipse 85% 70% at 50% 45%, transparent 42%, rgba(28, 27, 24, 0.08) 100%);
+    opacity: 0.7;
+  }
+  .atmosphere .atm-wire {
+    position: absolute;
+    width: 128px; height: 128px;
+    border: 1px dashed rgba(136, 192, 208, 0.55);
     border-radius: 6px;
     transform-style: preserve-3d;
-    opacity: 0.55;
-    animation: wire-float 16s ease-in-out infinite alternate;
+    opacity: 0.58;
     will-change: transform, opacity;
   }
-  .atmosphere .wire::before,
-  .atmosphere .wire::after {
+  .atmosphere .atm-wire::before,
+  .atmosphere .atm-wire::after {
     content: ""; position: absolute; width: 10px; height: 10px;
-    border-color: inherit; border-style: solid; opacity: 0.85;
+    border-color: inherit; border-style: solid; opacity: 0.9;
   }
-  .atmosphere .wire::before {
+  .atmosphere .atm-wire::before {
     top: -1px; left: -1px; border-width: 2px 0 0 2px;
   }
-  .atmosphere .wire::after {
+  .atmosphere .atm-wire::after {
     bottom: -1px; right: -1px; border-width: 0 2px 2px 0;
   }
-  .atmosphere .wire-a {
-    top: 16%; right: 10%;
-    animation-duration: 15s;
+  .atmosphere .atm-wire-a { top: 15%; right: 9%; }
+  .atmosphere .atm-wire-b {
+    bottom: 18%; left: 7%; width: 96px; height: 96px;
+    border-color: rgba(178, 216, 154, 0.52);
   }
-  .atmosphere .wire-b {
-    bottom: 20%; left: 8%; width: 96px; height: 96px;
-    border-color: rgba(178, 216, 154, 0.48);
-    animation-delay: -6s; animation-duration: 18s;
-  }
-  .atmosphere .wire-c {
-    top: 42%; right: 28%; width: 72px; height: 72px;
-    border-color: rgba(235, 203, 139, 0.42);
+  .atmosphere .atm-wire-c {
+    top: 44%; right: 26%; width: 72px; height: 72px;
+    border-color: rgba(235, 203, 139, 0.48);
     border-style: solid;
-    animation-delay: -11s; animation-duration: 14s;
   }
-  .atmosphere .grain {
+  [data-theme="light"] .atmosphere .atm-wire {
+    opacity: 0.4; border-color: rgba(31, 92, 86, 0.34);
+  }
+  [data-theme="light"] .atmosphere .atm-wire-b { border-color: rgba(138, 106, 26, 0.3); }
+  [data-theme="light"] .atmosphere .atm-wire-c { border-color: rgba(138, 106, 26, 0.26); }
+  .atmosphere .atm-grain {
     position: absolute; inset: 0;
-    opacity: 0.05;
+    opacity: 0.045;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
     background-size: 180px 180px; mix-blend-mode: overlay;
-    animation: grain-breathe 22s ease-in-out infinite alternate;
+    will-change: opacity;
   }
-  [data-theme="light"] .atmosphere .orb-a {
-    background: radial-gradient(circle, rgba(31, 92, 86, 0.22), rgba(31, 92, 86, 0.06) 55%, transparent 72%);
+  [data-theme="light"] .atmosphere .atm-grain {
+    opacity: 0.06; mix-blend-mode: multiply;
   }
-  [data-theme="light"] .atmosphere .orb-b {
-    background: radial-gradient(circle, rgba(138, 106, 26, 0.18), rgba(138, 106, 26, 0.05) 55%, transparent 72%);
-  }
-  [data-theme="light"] .atmosphere .orb-c {
-    background: radial-gradient(circle, rgba(31, 92, 86, 0.14), rgba(31, 92, 86, 0.04) 55%, transparent 74%);
-  }
-  [data-theme="light"] .atmosphere .orb-d {
-    background: radial-gradient(circle, rgba(138, 106, 26, 0.14), rgba(138, 106, 26, 0.04) 55%, transparent 72%);
-  }
-  [data-theme="light"] .atmosphere .orb-e {
-    background: radial-gradient(circle, rgba(31, 92, 86, 0.12), rgba(31, 92, 86, 0.03) 50%, transparent 70%);
-  }
-  [data-theme="light"] .atmosphere .depth-grid {
-    --grid-op-lo: 0.09;
-    --grid-op-hi: 0.16;
-  }
-  [data-theme="light"] .atmosphere .wire {
-    opacity: 0.38; border-color: rgba(31, 92, 86, 0.32);
-  }
-  [data-theme="light"] .atmosphere .wire-b { border-color: rgba(138, 106, 26, 0.28); }
-  [data-theme="light"] .atmosphere .wire-c { border-color: rgba(138, 106, 26, 0.24); }
-  [data-theme="light"] .atmosphere .grain { opacity: 0.07; mix-blend-mode: multiply; }
-  @keyframes orb-drift {
-    0% { transform: translate3d(0, 0, 0) scale(0.94); opacity: 0.72; }
-    40% { transform: translate3d(12%, 8%, 0) scale(1.12); opacity: 1; }
-    70% { transform: translate3d(-8%, 14%, 0) scale(1.04); opacity: 0.88; }
-    100% { transform: translate3d(-14%, -6%, 0) scale(0.92); opacity: 0.78; }
-  }
-  @keyframes wire-float {
-    0% {
-      transform: rotateX(48deg) rotateY(-12deg) rotateZ(-18deg) translate3d(0, 0, 0);
-      opacity: 0.4;
-    }
-    50% {
-      transform: rotateX(38deg) rotateY(10deg) rotateZ(-4deg) translate3d(28px, -36px, 24px);
-      opacity: 0.7;
-    }
-    100% {
-      transform: rotateX(52deg) rotateY(-6deg) rotateZ(8deg) translate3d(-22px, 20px, -12px);
-      opacity: 0.48;
-    }
-  }
-  @keyframes grid-pulse {
-    0% {
-      transform: translateY(0) rotateX(0deg);
-      opacity: var(--grid-op-lo);
-    }
-    100% {
-      transform: translateY(3.5%) rotateX(2.5deg);
-      opacity: var(--grid-op-hi);
-    }
-  }
-  @keyframes grain-breathe {
-    0% { opacity: 0.04; }
-    100% { opacity: 0.065; }
-  }
-  @keyframes enter-rise {
-    from { opacity: 0; transform: translateY(14px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .enter {
-    animation: enter-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
-  .enter-1 { animation-delay: 0.04s; }
-  .enter-2 { animation-delay: 0.12s; }
-  .enter-3 { animation-delay: 0.2s; }
-  .enter-4 { animation-delay: 0.28s; }
-  @media (prefers-reduced-motion: reduce) {
-    .atmosphere .orb,
-    .atmosphere .wire,
-    .atmosphere .depth-grid,
-    .atmosphere .grain,
+  @media (prefers-reduced-motion: no-preference) {
     .enter {
-      animation: none !important;
+      opacity: 0;
+      transform: translateY(14px);
     }
-    .atmosphere .orb { opacity: 0.55; transform: none; }
-    .atmosphere .wire { opacity: 0.28; transform: rotateX(48deg) rotateZ(-18deg); }
-    .atmosphere .depth-grid { opacity: 0.22; transform: none; }
-    [data-theme="light"] .atmosphere .depth-grid { opacity: 0.11; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .atmosphere .atm-light { opacity: 0.55; transform: none; }
+    .atmosphere .atm-depth { opacity: 0.22; transform: none; }
+    [data-theme="light"] .atmosphere .atm-depth { opacity: 0.11; }
+    .atmosphere .atm-wire { opacity: 0.32; transform: rotateX(48deg) rotateZ(-18deg); }
     .card:hover,
     button.primary:hover { transform: none; }
   }
@@ -630,16 +623,18 @@
   details.all-countries[open] > summary::before { content: "− "; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#controls">Skip to controls</a>
-<div class="atmosphere" aria-hidden="true">
-  <div class="orb orb-a"></div>
-  <div class="orb orb-b"></div>
-  <div class="orb orb-c"></div>
-  <div class="orb orb-d"></div>
-  <div class="orb orb-e"></div>
-  <div class="depth-grid">
+<div class="atmosphere" id="atmosphere" aria-hidden="true">
+  <div class="atm-wash"></div>
+  <div class="atm-lights">
+    <div class="atm-light atm-light-a" data-atm="light-a"></div>
+    <div class="atm-light atm-light-b" data-atm="light-b"></div>
+    <div class="atm-light atm-light-c" data-atm="light-c"></div>
+  </div>
+  <div class="atm-depth" data-atm="depth">
     <svg viewBox="0 0 100 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="gridFade" x1="0" y1="0" x2="0" y2="1">
@@ -647,19 +642,20 @@
           <stop offset="100%" stop-color="currentColor" stop-opacity="0"/>
         </linearGradient>
       </defs>
-      <g fill="none" stroke="url(#gridFade)" stroke-width="0.15" color="#88C0D0">
+      <g fill="none" stroke="url(#gridFade)" stroke-width="0.15">
         <path d="M0 10 H100 M0 20 H100 M0 30 H100 M0 40 H100 M0 50 H100"/>
         <path d="M10 0 V60 M20 0 V60 M30 0 V60 M40 0 V60 M50 0 V60 M60 0 V60 M70 0 V60 M80 0 V60 M90 0 V60"/>
       </g>
     </svg>
   </div>
-  <div class="wire wire-a"></div>
-  <div class="wire wire-b"></div>
-  <div class="wire wire-c"></div>
-  <div class="grain"></div>
+  <div class="atm-vignette" data-atm="vignette"></div>
+  <div class="atm-wire atm-wire-a" data-atm="wire-a"></div>
+  <div class="atm-wire atm-wire-b" data-atm="wire-b"></div>
+  <div class="atm-wire atm-wire-c" data-atm="wire-c"></div>
+  <div class="atm-grain" data-atm="grain"></div>
 </div>
 <div class="wrap">
-  <header class="app enter enter-1">
+  <header class="app enter">
     <div class="brand-block">
       <div class="brand-row">
         <h1>KingIndex</h1>
@@ -686,7 +682,7 @@
     </div>
   </header>
 
-  <div class="controls enter enter-2" id="controls">
+  <div class="controls enter" id="controls">
     <div>
       <label for="income">Annual income</label>
       <input type="text" id="income" inputmode="decimal" value="800,000" autocomplete="off" />
@@ -723,11 +719,11 @@
       <button class="primary" id="rankBtn" type="button">Compare</button>
     </div>
   </div>
-  <p class="hint enter enter-3" id="currencyHint">Income is annual, in the home country's currency.</p>
+  <p class="hint enter" id="currencyHint">Income is annual, in the home country's currency.</p>
   <p class="clamp-notice" id="clampNotice" aria-live="polite"></p>
 
   <p class="caveat-short">Country-level consumption prices + PIP survey medians. Not rent, tax, visa, or school fees.</p>
-  <details class="method enter enter-4" id="caveat">
+  <details class="method enter" id="caveat">
     <summary>How this is calculated</summary>
     <div class="body">
       <strong>Core metric:</strong> multiple of local median =
@@ -830,6 +826,7 @@
   <footer class="note" id="metaNote"></footer>
 </div>
 
+<script src="./atmosphere.js"></script>
 <script src="./app.js"></script>
 </body>
 </html>

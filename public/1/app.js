@@ -665,10 +665,16 @@
   function applyTheme(pref) {
     if (pref !== "light" && pref !== "dark" && pref !== "system") pref = "system";
     const resolved = resolveTheme(pref);
+    const prev = document.documentElement.getAttribute("data-theme");
     document.documentElement.setAttribute("data-theme", resolved);
     document.documentElement.setAttribute("data-theme-pref", pref);
     try { localStorage.setItem("kingindex-v2-1-theme", pref); } catch (_) {}
     syncThemeButtons(pref, resolved);
+    if (prev !== resolved) {
+      try {
+        window.dispatchEvent(new CustomEvent("kingindex:themechange", { detail: { theme: resolved, pref } }));
+      } catch (_) {}
+    }
   }
   (function initTheme() {
     let t = "system";
