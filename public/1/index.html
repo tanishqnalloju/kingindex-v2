@@ -155,43 +155,53 @@
   .skip-link:focus, .skip-link:focus-visible { left: 0; outline: 3px solid var(--hero); outline-offset: 2px; }
   .wrap { max-width: 1180px; margin: 0 auto; padding: 20px 22px 56px; position: relative; z-index: 1; }
 
-  /* Atmosphere: fixed aurora / depth behind content */
+  /* Atmosphere: MOTION 7 ambient — claimed travel matches shown travel */
   .atmosphere {
     position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
   }
   .atmosphere .orb {
-    position: absolute; border-radius: 50%; filter: blur(64px);
+    position: absolute; border-radius: 50%; filter: blur(52px);
     will-change: transform, opacity;
-    animation: orb-drift var(--dur, 28s) ease-in-out infinite alternate;
+    animation: orb-drift var(--dur, 16s) ease-in-out infinite alternate;
   }
   .atmosphere .orb-a {
-    width: min(52vw, 520px); height: min(52vw, 520px);
-    top: -12%; left: -8%;
-    background: radial-gradient(circle, rgba(136, 192, 208, 0.42), transparent 68%);
-    --dur: 26s; animation-delay: -4s;
+    width: min(56vw, 560px); height: min(56vw, 560px);
+    top: -14%; left: -10%;
+    background: radial-gradient(circle, rgba(136, 192, 208, 0.58), rgba(136, 192, 208, 0.12) 52%, transparent 72%);
+    --dur: 14s; animation-delay: -3s;
   }
   .atmosphere .orb-b {
-    width: min(44vw, 440px); height: min(44vw, 440px);
-    top: 28%; right: -10%;
-    background: radial-gradient(circle, rgba(163, 190, 140, 0.32), transparent 70%);
-    --dur: 32s; animation-delay: -11s;
+    width: min(48vw, 480px); height: min(48vw, 480px);
+    top: 24%; right: -12%;
+    background: radial-gradient(circle, rgba(178, 216, 154, 0.48), rgba(163, 190, 140, 0.1) 55%, transparent 74%);
+    --dur: 17s; animation-delay: -8s;
   }
   .atmosphere .orb-c {
-    width: min(38vw, 380px); height: min(38vw, 380px);
-    bottom: -8%; left: 28%;
-    background: radial-gradient(circle, rgba(235, 203, 139, 0.22), transparent 72%);
-    --dur: 36s; animation-delay: -18s;
+    width: min(42vw, 420px); height: min(42vw, 420px);
+    bottom: -10%; left: 22%;
+    background: radial-gradient(circle, rgba(235, 203, 139, 0.38), rgba(235, 203, 139, 0.08) 55%, transparent 74%);
+    --dur: 19s; animation-delay: -12s;
   }
   .atmosphere .orb-d {
-    width: min(30vw, 300px); height: min(30vw, 300px);
-    top: 55%; left: 8%;
-    background: radial-gradient(circle, rgba(143, 188, 187, 0.28), transparent 70%);
-    --dur: 30s; animation-delay: -7s;
+    width: min(34vw, 340px); height: min(34vw, 340px);
+    top: 52%; left: 6%;
+    background: radial-gradient(circle, rgba(147, 224, 208, 0.46), rgba(143, 188, 187, 0.1) 55%, transparent 72%);
+    --dur: 15s; animation-delay: -5s;
+  }
+  .atmosphere .orb-e {
+    width: min(28vw, 280px); height: min(28vw, 280px);
+    top: 8%; left: 42%;
+    background: radial-gradient(circle, rgba(136, 192, 208, 0.36), rgba(147, 224, 208, 0.08) 50%, transparent 70%);
+    --dur: 13s; animation-delay: -1s; filter: blur(48px);
   }
   .atmosphere .depth-grid {
     position: absolute; inset: -10% -5% 20%;
     perspective: 720px; transform-style: preserve-3d;
-    opacity: 0.18;
+    --grid-op-lo: 0.2;
+    --grid-op-hi: 0.32;
+    opacity: var(--grid-op-lo);
+    animation: grid-pulse 20s ease-in-out infinite alternate;
+    will-change: transform, opacity;
   }
   .atmosphere .depth-grid svg {
     width: 100%; height: 100%;
@@ -199,54 +209,131 @@
     transform-origin: 50% 0%;
   }
   .atmosphere .wire {
-    position: absolute; width: 120px; height: 120px;
-    border: 1px solid rgba(136, 192, 208, 0.35);
-    border-radius: 8px;
-    transform: rotateX(48deg) rotateZ(-18deg);
-    opacity: 0.45;
-    animation: wire-float 22s ease-in-out infinite alternate;
+    position: absolute; width: 132px; height: 132px;
+    border: 1px dashed rgba(136, 192, 208, 0.5);
+    border-radius: 6px;
+    transform-style: preserve-3d;
+    opacity: 0.55;
+    animation: wire-float 16s ease-in-out infinite alternate;
+    will-change: transform, opacity;
   }
-  .atmosphere .wire-a { top: 18%; right: 12%; }
+  .atmosphere .wire::before,
+  .atmosphere .wire::after {
+    content: ""; position: absolute; width: 10px; height: 10px;
+    border-color: inherit; border-style: solid; opacity: 0.85;
+  }
+  .atmosphere .wire::before {
+    top: -1px; left: -1px; border-width: 2px 0 0 2px;
+  }
+  .atmosphere .wire::after {
+    bottom: -1px; right: -1px; border-width: 0 2px 2px 0;
+  }
+  .atmosphere .wire-a {
+    top: 16%; right: 10%;
+    animation-duration: 15s;
+  }
   .atmosphere .wire-b {
-    bottom: 22%; left: 10%; width: 88px; height: 88px;
-    border-color: rgba(163, 190, 140, 0.32);
-    animation-delay: -9s; animation-duration: 26s;
+    bottom: 20%; left: 8%; width: 96px; height: 96px;
+    border-color: rgba(178, 216, 154, 0.48);
+    animation-delay: -6s; animation-duration: 18s;
+  }
+  .atmosphere .wire-c {
+    top: 42%; right: 28%; width: 72px; height: 72px;
+    border-color: rgba(235, 203, 139, 0.42);
+    border-style: solid;
+    animation-delay: -11s; animation-duration: 14s;
   }
   .atmosphere .grain {
     position: absolute; inset: 0;
-    opacity: 0.045;
+    opacity: 0.05;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
     background-size: 180px 180px; mix-blend-mode: overlay;
+    animation: grain-breathe 22s ease-in-out infinite alternate;
   }
   [data-theme="light"] .atmosphere .orb-a {
-    background: radial-gradient(circle, rgba(31, 92, 86, 0.12), transparent 70%);
+    background: radial-gradient(circle, rgba(31, 92, 86, 0.22), rgba(31, 92, 86, 0.06) 55%, transparent 72%);
   }
   [data-theme="light"] .atmosphere .orb-b {
-    background: radial-gradient(circle, rgba(138, 106, 26, 0.10), transparent 70%);
+    background: radial-gradient(circle, rgba(138, 106, 26, 0.18), rgba(138, 106, 26, 0.05) 55%, transparent 72%);
   }
   [data-theme="light"] .atmosphere .orb-c {
-    background: radial-gradient(circle, rgba(31, 92, 86, 0.08), transparent 72%);
+    background: radial-gradient(circle, rgba(31, 92, 86, 0.14), rgba(31, 92, 86, 0.04) 55%, transparent 74%);
   }
   [data-theme="light"] .atmosphere .orb-d {
-    background: radial-gradient(circle, rgba(138, 106, 26, 0.07), transparent 70%);
+    background: radial-gradient(circle, rgba(138, 106, 26, 0.14), rgba(138, 106, 26, 0.04) 55%, transparent 72%);
   }
-  [data-theme="light"] .atmosphere .depth-grid { opacity: 0.07; }
-  [data-theme="light"] .atmosphere .wire { opacity: 0.22; border-color: rgba(31, 92, 86, 0.22); }
-  [data-theme="light"] .atmosphere .grain { opacity: 0.06; mix-blend-mode: multiply; }
+  [data-theme="light"] .atmosphere .orb-e {
+    background: radial-gradient(circle, rgba(31, 92, 86, 0.12), rgba(31, 92, 86, 0.03) 50%, transparent 70%);
+  }
+  [data-theme="light"] .atmosphere .depth-grid {
+    --grid-op-lo: 0.09;
+    --grid-op-hi: 0.16;
+  }
+  [data-theme="light"] .atmosphere .wire {
+    opacity: 0.38; border-color: rgba(31, 92, 86, 0.32);
+  }
+  [data-theme="light"] .atmosphere .wire-b { border-color: rgba(138, 106, 26, 0.28); }
+  [data-theme="light"] .atmosphere .wire-c { border-color: rgba(138, 106, 26, 0.24); }
+  [data-theme="light"] .atmosphere .grain { opacity: 0.07; mix-blend-mode: multiply; }
   @keyframes orb-drift {
-    0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.7; }
-    50% { transform: translate3d(4%, 3%, 0) scale(1.06); opacity: 0.95; }
-    100% { transform: translate3d(-3%, 5%, 0) scale(0.96); opacity: 0.75; }
+    0% { transform: translate3d(0, 0, 0) scale(0.94); opacity: 0.72; }
+    40% { transform: translate3d(12%, 8%, 0) scale(1.12); opacity: 1; }
+    70% { transform: translate3d(-8%, 14%, 0) scale(1.04); opacity: 0.88; }
+    100% { transform: translate3d(-14%, -6%, 0) scale(0.92); opacity: 0.78; }
   }
   @keyframes wire-float {
-    0% { transform: rotateX(48deg) rotateZ(-18deg) translate3d(0, 0, 0); opacity: 0.35; }
-    100% { transform: rotateX(42deg) rotateZ(-8deg) translate3d(12px, -18px, 0); opacity: 0.55; }
+    0% {
+      transform: rotateX(48deg) rotateY(-12deg) rotateZ(-18deg) translate3d(0, 0, 0);
+      opacity: 0.4;
+    }
+    50% {
+      transform: rotateX(38deg) rotateY(10deg) rotateZ(-4deg) translate3d(28px, -36px, 24px);
+      opacity: 0.7;
+    }
+    100% {
+      transform: rotateX(52deg) rotateY(-6deg) rotateZ(8deg) translate3d(-22px, 20px, -12px);
+      opacity: 0.48;
+    }
   }
+  @keyframes grid-pulse {
+    0% {
+      transform: translateY(0) rotateX(0deg);
+      opacity: var(--grid-op-lo);
+    }
+    100% {
+      transform: translateY(3.5%) rotateX(2.5deg);
+      opacity: var(--grid-op-hi);
+    }
+  }
+  @keyframes grain-breathe {
+    0% { opacity: 0.04; }
+    100% { opacity: 0.065; }
+  }
+  @keyframes enter-rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .enter {
+    animation: enter-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .enter-1 { animation-delay: 0.04s; }
+  .enter-2 { animation-delay: 0.12s; }
+  .enter-3 { animation-delay: 0.2s; }
+  .enter-4 { animation-delay: 0.28s; }
   @media (prefers-reduced-motion: reduce) {
     .atmosphere .orb,
-    .atmosphere .wire { animation: none !important; }
-    .atmosphere .orb { opacity: 0.55; }
-    .atmosphere .wire { opacity: 0.28; }
+    .atmosphere .wire,
+    .atmosphere .depth-grid,
+    .atmosphere .grain,
+    .enter {
+      animation: none !important;
+    }
+    .atmosphere .orb { opacity: 0.55; transform: none; }
+    .atmosphere .wire { opacity: 0.28; transform: rotateX(48deg) rotateZ(-18deg); }
+    .atmosphere .depth-grid { opacity: 0.22; transform: none; }
+    [data-theme="light"] .atmosphere .depth-grid { opacity: 0.11; }
+    .card:hover,
+    button.primary:hover { transform: none; }
   }
 
   /* Masthead: left brand, right theme - asymmetric */
@@ -368,10 +455,10 @@
     background: linear-gradient(180deg, var(--primary-top), var(--primary-bot));
     border: none; color: var(--primary-ink); font-weight: 600;
     cursor: pointer; white-space: nowrap; letter-spacing: -0.01em;
-    transition: transform 160ms ease, filter 160ms ease;
+    transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1), filter 160ms ease;
   }
-  button.primary:hover { filter: brightness(1.08); }
-  button.primary:active { transform: scale(0.98); }
+  button.primary:hover { filter: brightness(1.08); transform: translateY(-2px); }
+  button.primary:active { transform: translateY(0) scale(0.98); }
   button.ghost {
     background: transparent; border: 1px solid var(--line); color: var(--muted);
     cursor: pointer; width: auto; padding: 6px 10px; font-size: 0.8rem; font-family: var(--font);
@@ -414,7 +501,9 @@
   .card {
     background: var(--panel); border: 1px solid var(--line);
     border-radius: var(--radius); padding: 18px 18px 16px;
+    transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 240ms ease;
   }
+  .card:hover { transform: translateY(-2px); }
   #destCard {
     background: var(--panel);
     border-color: var(--accent);
@@ -549,6 +638,7 @@
   <div class="orb orb-b"></div>
   <div class="orb orb-c"></div>
   <div class="orb orb-d"></div>
+  <div class="orb orb-e"></div>
   <div class="depth-grid">
     <svg viewBox="0 0 100 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -565,10 +655,11 @@
   </div>
   <div class="wire wire-a"></div>
   <div class="wire wire-b"></div>
+  <div class="wire wire-c"></div>
   <div class="grain"></div>
 </div>
 <div class="wrap">
-  <header class="app">
+  <header class="app enter enter-1">
     <div class="brand-block">
       <div class="brand-row">
         <h1>KingIndex</h1>
@@ -595,7 +686,7 @@
     </div>
   </header>
 
-  <div class="controls" id="controls">
+  <div class="controls enter enter-2" id="controls">
     <div>
       <label for="income">Annual income</label>
       <input type="text" id="income" inputmode="decimal" value="800,000" autocomplete="off" />
@@ -632,11 +723,11 @@
       <button class="primary" id="rankBtn" type="button">Compare</button>
     </div>
   </div>
-  <p class="hint" id="currencyHint">Income is annual, in the home country's currency.</p>
+  <p class="hint enter enter-3" id="currencyHint">Income is annual, in the home country's currency.</p>
   <p class="clamp-notice" id="clampNotice" aria-live="polite"></p>
 
   <p class="caveat-short">Country-level consumption prices + PIP survey medians. Not rent, tax, visa, or school fees.</p>
-  <details class="method" id="caveat">
+  <details class="method enter enter-4" id="caveat">
     <summary>How this is calculated</summary>
     <div class="body">
       <strong>Core metric:</strong> multiple of local median =
