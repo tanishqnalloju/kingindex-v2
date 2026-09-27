@@ -1,4 +1,4 @@
-/* KingIndex /3 — Phosphor oscilloscope: GSAP signal sweep reacts to income/dest. */
+/* KingIndex /3 — Phosphor oscilloscope: three-signal sweep (home / dest / PPP). */
 (function () {
   "use strict";
 
@@ -25,8 +25,19 @@
     return n.toFixed(2) + "×";
   }
 
-  function buildPath(amp, phase, w, h) {
-    const mid = h * 0.55;
+  function fmtMoneyCompact(n, currency) {
+    if (n == null || !isFinite(n)) return "—";
+    const abs = Math.abs(n);
+    const digits = abs >= 1000 ? 0 : abs >= 100 ? 1 : 2;
+    const s = n.toLocaleString("en-US", {
+      maximumFractionDigits: digits,
+      minimumFractionDigits: 0
+    });
+    return currency && currency !== "LCU" ? s + " " + currency : s;
+  }
+
+  function buildPath(amp, phase, w, h, midFrac) {
+    const mid = h * (midFrac == null ? 0.55 : midFrac);
     const pts = [];
     const n = 48;
     for (let i = 0; i <= n; i++) {
@@ -35,7 +46,7 @@
       const wave =
         Math.sin(t * Math.PI * 2.2 + phase) * amp * 0.55 +
         Math.sin(t * Math.PI * 5.1 + phase * 1.7) * amp * 0.22 +
-        Math.sin(t * Math.PI * 0.7) * amp * 0.18;
+        Math.sin(t * Math.PI * 0.7 + phase * 0.4) * amp * 0.18;
       const envelope = Math.sin(t * Math.PI) * 0.85 + 0.15;
       const y = mid - wave * envelope;
       pts.push((i === 0 ? "M" : "L") + x.toFixed(1) + "," + y.toFixed(1));
@@ -46,85 +57,166 @@
   function init() {
     if (typeof gsap === "undefined") return;
     const canvas = document.getElementById("scopeCanvas");
-    const trace = document.getElementById("scopeTrace");
     const beam = document.getElementById("scopeBeam");
-    const glow = document.getElementById("scopeGlow");
-    const readout = document.getElementById("scopeReadout");
-    const sub = document.getElementById("scopeSub");
     const scan = document.getElementById("scopeScan");
-    if (!canvas || !trace) return;
+    const readoutH = document.getElementById("scopeReadoutH");
+    const readoutD = document.getElementById("scopeReadoutD");
+    const readoutP = document.getElementById("scopeReadoutP");
+    const chD = document.getElementById("scopeChD");
+    const chP = document.getElementById("scopeChP");
+    if (!canvas) return;
+
+    const channels = [
+      {
+        key: "H",
+        trace: document.getElementById("scopeTraceH"),
+        glow: document.getElementById("scopeGlowH"),
+        phaseBase: 0.0,
+        mid: 0.42
+      },
+      {
+        key: "D",
+        trace: document.getElementById("scopeTraceD"),
+        glow: document.getElementById("scopeGlowD"),
+        phaseBase: 1.1,
+        mid: 0.55
+      },
+      {
+        key: "P",
+        trace: document.getElementById("scopeTraceP"),
+        glow: document.getElementById("scopeGlowP"),
+        phaseBase: 2.2,
+        mid: 0.68
+      }
+    ];
+    if (!channels[0].trace || !channels[1].trace || !channels[2].trace) return;
 
     const W = 640;
     const H = 220;
-    let lastMult = null;
+    let lastSig = { h: null, d: null, p: null, dest: "" };
     let phase = 0;
     let sweepTween = null;
     let ambientCtx = null;
     let entered = false;
+    let lastAmps = [28, 18, 16];
 
-    function setStaticTrace(amp) {
-      const d = buildPath(amp, phase, W, H);
-      trace.setAttribute("d", d);
-      if (glow) glow.setAttribute("d", d);
+    function ampFromMultiple(m) {
+      if (m == null || !isFinite(m)) return 14;
+      const capped = Math.min(80, Math.max(0.05, m));
+      return 16 + Math.log10(capped + 1) * 36;
+    }
+
+    function ampFromPpp(equiv, fxLocal) {
+      if (equiv == null || !isFinite(equiv) || equiv <= 0) return 12;
+      if (fxLocal != null && isFinite(fxLocal) && fxLocal > 0) {
+        const ratio = equiv / fxLocal;
+        return ampFromMultiple(ratio);
+      }
+      const lg = Math.log10(Math.max(1, equiv));
+      const t = Math.min(1, Math.max(0, (lg - 2) / 5));
+      return 16 + t * 48;
+    }
+
+    function setPaths(amps, phases) {
+      channels.forEach((ch, i) => {
+        const d = buildPath(amps[i], phases[i], W, H, ch.mid);
+        ch.trace.setAttribute("d", d);
+        if (ch.glow) ch.glow.setAttribute("d", d);
+      });
+    }
+
+    function setStaticTraces(amps) {
+      const phases = channels.map((ch) => phase + ch.phaseBase);
+      setPaths(amps, phases);
       if (beam) gsap.set(beam, { attr: { x1: W * 0.92, x2: W * 0.92 }, opacity: 0.35 });
       if (scan) gsap.set(scan, { xPercent: 0, opacity: 0.12 });
     }
 
-    function ampFromMultiple(m) {
-      if (m == null || !isFinite(m)) return 28;
-      const capped = Math.min(80, Math.max(1, m));
-      return 18 + Math.log10(capped + 1) * 38;
-    }
-
-    function runSweep(amp) {
+    function runSweep(amps) {
+      lastAmps = amps.slice();
       if (prefersReduced()) {
-        setStaticTrace(amp);
+        setStaticTraces(amps);
         return;
       }
       phase += 0.85;
-      const d = buildPath(amp, phase, W, H);
-      trace.setAttribute("d", d);
-      if (glow) glow.setAttribute("d", d);
+      const phases = channels.map((ch) => phase + ch.phaseBase);
+      setPaths(amps, phases);
 
       if (sweepTween) sweepTween.kill();
       const tl = gsap.timeline();
       if (beam) {
         gsap.set(beam, { attr: { x1: 0, x2: 0 }, opacity: 0.85 });
-        tl.to(beam, {
-          attr: { x1: W, x2: W },
-          duration: 0.85,
-          ease: "power2.inOut",
-          opacity: 0.25
-        }, 0);
+        tl.to(
+          beam,
+          {
+            attr: { x1: W, x2: W },
+            duration: 0.85,
+            ease: "power2.inOut",
+            opacity: 0.25
+          },
+          0
+        );
       }
       if (scan) {
         gsap.set(scan, { xPercent: -110, opacity: 0.28 });
         tl.to(scan, { xPercent: 110, duration: 0.9, ease: "power1.inOut", opacity: 0.08 }, 0);
       }
-      gsap.fromTo(trace, { opacity: 0.35 }, { opacity: 1, duration: 0.45, ease: "power2.out" });
-      if (glow) gsap.fromTo(glow, { opacity: 0.15 }, { opacity: 0.45, duration: 0.5, ease: "power2.out" });
+      channels.forEach((ch, i) => {
+        gsap.fromTo(ch.trace, { opacity: 0.3 }, { opacity: 1, duration: 0.45, ease: "power2.out", delay: i * 0.04 });
+        if (ch.glow) {
+          gsap.fromTo(ch.glow, { opacity: 0.12 }, { opacity: 0.4, duration: 0.5, ease: "power2.out", delay: i * 0.04 });
+        }
+      });
       sweepTween = tl;
     }
 
+    function numChanged(a, b) {
+      if (a == null && b == null) return false;
+      if (a == null || b == null) return true;
+      return Math.abs(a - b) > 0.001;
+    }
+
     function updateReadout(payload) {
-      const m = payload.hasDest ? payload.destMultiple : payload.homeMult;
-      const label = payload.hasDest ? "× local median" : "× home median";
-      if (readout) readout.textContent = fmtMultiple(m);
-      if (sub) {
-        sub.textContent = payload.hasDest
-          ? label + " · class signal"
-          : "Home channel · pick a destination";
+      const p = payload || {};
+      const homeMult = p.homeMult;
+      const destMultiple = p.destMultiple;
+      const pppEquiv = p.pppEquiv;
+      const fxLocal = p.fxLocal;
+      const destCurrency = p.destCurrency || "";
+      const hasDest = !!p.hasDest;
+
+      if (readoutH) readoutH.textContent = fmtMultiple(homeMult);
+      if (readoutD) {
+        readoutD.textContent = hasDest && destMultiple != null ? fmtMultiple(destMultiple) : "—";
       }
-      const amp = ampFromMultiple(m);
+      if (readoutP) {
+        readoutP.textContent =
+          hasDest && pppEquiv != null ? fmtMoneyCompact(pppEquiv, destCurrency) : "—";
+      }
+      if (chD) chD.classList.toggle("muted-ch", !hasDest || destMultiple == null);
+      if (chP) chP.classList.toggle("muted-ch", !hasDest || pppEquiv == null);
+
+      const ampH = ampFromMultiple(homeMult);
+      const ampD =
+        hasDest && destMultiple != null ? ampFromMultiple(destMultiple) : 10;
+      const ampP = hasDest && pppEquiv != null ? ampFromPpp(pppEquiv, fxLocal) : 10;
+      const amps = [ampH, ampD, ampP];
+
       const changed =
-        lastMult == null ||
-        m == null ||
-        Math.abs((m || 0) - (lastMult || 0)) > 0.001 ||
-        payload.destIso !== updateReadout._dest;
-      updateReadout._dest = payload.destIso;
-      if (changed) runSweep(amp);
-      else if (prefersReduced()) setStaticTrace(amp);
-      lastMult = m;
+        numChanged(homeMult, lastSig.h) ||
+        numChanged(destMultiple, lastSig.d) ||
+        numChanged(pppEquiv, lastSig.p) ||
+        (p.destIso || "") !== lastSig.dest;
+
+      lastSig = {
+        h: homeMult,
+        d: destMultiple,
+        p: pppEquiv,
+        dest: p.destIso || ""
+      };
+
+      if (changed) runSweep(amps);
+      else if (prefersReduced()) setStaticTraces(amps);
     }
 
     function entrance() {
@@ -150,7 +242,7 @@
       ambientCtx = gsap.context(() => {
         const mm = gsap.matchMedia();
         mm.add("(prefers-reduced-motion: reduce)", () => {
-          setStaticTrace(ampFromMultiple(lastMult));
+          setStaticTraces(lastAmps);
           gsap.set(".phosphor-glow", { opacity: 0.35 });
           gsap.set(".grid-drift", { xPercent: 0, yPercent: 0 });
           return () => {};
@@ -200,7 +292,7 @@
       }
     };
 
-    setStaticTrace(28);
+    setStaticTraces([28, 18, 16]);
     entrance();
     ambient();
     window.addEventListener("kingindex:themechange", () => {

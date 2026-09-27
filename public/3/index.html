@@ -82,6 +82,9 @@
     --band-king-glow: rgba(61, 255, 168, 0.18);
     --scope-grid: rgba(61, 255, 168, 0.12);
     --scope-trace: #3dffa8;
+    --ch-h: #5ce1e6;
+    --ch-d: #3dffa8;
+    --ch-p: #e0c07a;
     --scanline: rgba(0, 0, 0, 0.22);
     --paper-ink: #d7ece6;
   }
@@ -136,6 +139,9 @@
     --band-king-glow: rgba(13, 122, 82, 0.15);
     --scope-grid: rgba(13, 122, 82, 0.18);
     --scope-trace: #0d7a52;
+    --ch-h: #0e6e72;
+    --ch-d: #0d7a52;
+    --ch-p: #8a6800;
     --scanline: rgba(40, 50, 30, 0.06);
     --paper-ink: #1a2218;
   }
@@ -356,20 +362,50 @@
     opacity: 0.85;
   }
   .scope-readout-block {
-    position: absolute; left: 14px; top: 12px; z-index: 2;
+    position: absolute; left: 12px; top: 10px; right: 12px; z-index: 2;
     pointer-events: none;
   }
-  #scopeReadout {
-    font-family: var(--mono); font-size: clamp(2rem, 5vw, 3.1rem);
-    font-weight: 600; letter-spacing: -0.04em; color: var(--scope-trace);
-    text-shadow: 0 0 18px rgba(61, 255, 168, 0.35);
-    line-height: 1; font-variant-numeric: tabular-nums;
+  .scope-chs {
+    display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: flex-end;
   }
-  [data-theme="light"] #scopeReadout { text-shadow: none; }
-  #scopeSub {
-    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--muted); margin-top: 6px;
+  .scope-ch {
+    min-width: 0; flex: 1 1 90px;
   }
+  .scope-ch .ch-tag {
+    display: block; font-family: var(--mono); font-size: 0.58rem;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 2px;
+  }
+  .scope-ch .ch-val {
+    display: block; font-family: var(--mono);
+    font-size: clamp(1.15rem, 2.8vw, 1.85rem);
+    font-weight: 600; letter-spacing: -0.03em; line-height: 1.05;
+    font-variant-numeric: tabular-nums;
+  }
+  .scope-ch .ch-lab {
+    display: block; font-family: var(--mono); font-size: 0.58rem;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+    margin-top: 3px;
+  }
+  .scope-ch.ch-h .ch-val { color: var(--ch-h); text-shadow: 0 0 14px rgba(92, 225, 230, 0.28); }
+  .scope-ch.ch-d .ch-val { color: var(--ch-d); text-shadow: 0 0 14px rgba(61, 255, 168, 0.3); }
+  .scope-ch.ch-p .ch-val { color: var(--ch-p); text-shadow: 0 0 14px rgba(224, 192, 122, 0.28); }
+  [data-theme="light"] .scope-ch .ch-val { text-shadow: none; }
+  .scope-ch.muted-ch { opacity: 0.38; }
+  .scope-legend {
+    display: inline-flex; flex-wrap: wrap; gap: 10px 14px; align-items: center;
+  }
+  .scope-legend .leg {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .scope-legend .leg i {
+    display: inline-block; width: 10px; height: 3px; border-radius: 1px;
+  }
+  .scope-legend .leg.leg-h i { background: var(--ch-h); box-shadow: 0 0 6px var(--ch-h); }
+  .scope-legend .leg.leg-d i { background: var(--ch-d); box-shadow: 0 0 6px var(--ch-d); }
+  .scope-legend .leg.leg-p i { background: var(--ch-p); box-shadow: 0 0 6px var(--ch-p); }
   #scopeCanvas {
     display: block; width: 100%; height: auto; min-height: 200px;
     position: relative; z-index: 1;
@@ -431,6 +467,20 @@
     font-size: 0.75rem; color: var(--muted); margin-top: 2px;
     font-variant-numeric: tabular-nums; font-family: var(--mono);
   }
+  .metric.lead { margin: 8px 0 14px; }
+  .metric.lead .k { color: var(--cyan); }
+  .metric.lead .v {
+    font-size: clamp(1.35rem, 2.4vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .metric.lead.lead-accent .v { color: var(--accent); }
+  .metric.lead.lead-ppp .v { color: var(--gold); }
+  .metric .s a.inline-ppp {
+    color: var(--cyan); text-decoration: underline; text-underline-offset: 2px;
+  }
+  .metric .s a.inline-ppp:hover { color: var(--accent); }
   .above-typical {
     font-family: var(--mono); font-size: 0.75rem; color: var(--muted);
     margin: 0; padding: 0 2px;
@@ -624,16 +674,31 @@
       </div>
     </aside>
 
-    <section class="instrument scope-panel enter" aria-label="Oscilloscope class signal">
-      <div class="instrument-head"><span>Scope · × median</span><span class="ch">SIG</span></div>
+    <section class="instrument scope-panel enter" aria-label="Oscilloscope three-signal compare">
+      <div class="instrument-head"><span>Scope · home / dest / PPP</span><span class="ch">3SIG</span></div>
       <div class="scope-bezel">
         <div class="scope-ticks" aria-hidden="true"></div>
         <div class="scope-scan" id="scopeScan" aria-hidden="true"></div>
         <div class="scope-readout-block">
-          <div id="scopeReadout">—</div>
-          <div id="scopeSub">Awaiting signal</div>
+          <div class="scope-chs">
+            <div class="scope-ch ch-h" id="scopeChH">
+              <span class="ch-tag">CH-H</span>
+              <span class="ch-val" id="scopeReadoutH">—</span>
+              <span class="ch-lab">Home · × median</span>
+            </div>
+            <div class="scope-ch ch-d muted-ch" id="scopeChD">
+              <span class="ch-tag">CH-D</span>
+              <span class="ch-val" id="scopeReadoutD">—</span>
+              <span class="ch-lab">Dest · × local</span>
+            </div>
+            <div class="scope-ch ch-p muted-ch" id="scopeChP">
+              <span class="ch-tag">CH-P</span>
+              <span class="ch-val" id="scopeReadoutP">—</span>
+              <span class="ch-lab">PPP Calculator</span>
+            </div>
+          </div>
         </div>
-        <svg id="scopeCanvas" viewBox="0 0 640 220" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Phosphor trace of class signal">
+        <svg id="scopeCanvas" viewBox="0 0 640 220" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Three phosphor traces: home, destination, PPP equivalent">
           <defs>
             <filter id="traceGlow" x="-20%" y="-20%" width="140%" height="140%">
               <feGaussianBlur stdDeviation="2.2" result="blur" />
@@ -643,14 +708,22 @@
               </feMerge>
             </filter>
           </defs>
-          <path id="scopeGlow" fill="none" stroke="var(--scope-trace)" stroke-width="4" opacity="0.35" filter="url(#traceGlow)" />
-          <path id="scopeTrace" fill="none" stroke="var(--scope-trace)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+          <path id="scopeGlowH" fill="none" stroke="var(--ch-h)" stroke-width="3.5" opacity="0.28" filter="url(#traceGlow)" />
+          <path id="scopeGlowD" fill="none" stroke="var(--ch-d)" stroke-width="3.5" opacity="0.28" filter="url(#traceGlow)" />
+          <path id="scopeGlowP" fill="none" stroke="var(--ch-p)" stroke-width="3.5" opacity="0.28" filter="url(#traceGlow)" />
+          <path id="scopeTraceH" fill="none" stroke="var(--ch-h)" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" />
+          <path id="scopeTraceD" fill="none" stroke="var(--ch-d)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+          <path id="scopeTraceP" fill="none" stroke="var(--ch-p)" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" />
           <line id="scopeBeam" x1="0" y1="0" x2="0" y2="220" stroke="var(--cyan)" stroke-width="1.25" opacity="0.4" />
         </svg>
       </div>
       <div class="scope-footer">
-        <span class="pip">Class signal</span>
-        <span>Sweep on income / dest change</span>
+        <span class="scope-legend" aria-label="Channel legend">
+          <span class="leg leg-h"><i aria-hidden="true"></i>CH-H</span>
+          <span class="leg leg-d"><i aria-hidden="true"></i>CH-D</span>
+          <span class="leg leg-p"><i aria-hidden="true"></i>CH-P</span>
+        </span>
+        <span>Sweep when any signal changes</span>
         <span>GSAP · transform only</span>
       </div>
       <div id="status" class="err hidden"></div>

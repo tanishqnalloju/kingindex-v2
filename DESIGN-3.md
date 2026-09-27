@@ -17,7 +17,7 @@
 - Light: paper instrument `#e8ebe4` / ink `#1a2218` / green `#0d7a52` — readable, not broken contrast
 - Type: Outfit (UI) + IBM Plex Mono (readouts, metrics, `tabular-nums`)
 - Atmosphere: scanline veil, perspective grid, phosphor glow planes (`pointer-events: none`); GSAP only `transform`/`opacity`
-- Hero: oscilloscope bezel with × median readout + GSAP signal sweep (`scope.js`, CDN `gsap@3.13.0`)
+- Hero: oscilloscope bezel with **three-signal** compare (CH-H home × median, CH-D dest × local, CH-P PPP Calculator equiv) + GSAP multi-trace sweep (`scope.js`, CDN `gsap@3.13.0`)
 - Theme UI: **production pattern only** — `#themeToggle` with ☾/☀ + Dark/Light label; persist `kingindex-v2-3-theme` as `light`|`dark` only. No System mode, no segmented Light|Dark|System
 - Staging SEO: `noindex, follow` + canonical → production apex
 - Staging badge: `Staging /3 Phosphor`
@@ -25,7 +25,7 @@
 
 ## Preserved IA / math
 - Same as prod / `/2`: income, net/gross, home, dest, household size; share params `income`, `home`, `type`, `dest`, `household_size`
-- Home metrics: Income (local), Per-capita PPP, × home median (+ welfare / PIP year / median $/yr), Price level vs US
-- Dest metrics: × local median (+ welfare / PIP / median), PPP equivalent (household), FX / wire-transfer, Cost vs home
+- Home telemetry (lead first): Income (local), × home median (or Per-capita PPP if no median), then secondary PPP / price level
+- Dest telemetry (lead first): × local median, PPP equivalent (household = PPP Calculator), then FX / cost vs home
 - Scatter lab + country table + band filters
-- Scope: `/3` only (not `/1`, `/2`, chooser math, or production apex)
+- Scope: `/3` only — three phosphor traces (frost cyan / phosphor green / gold); reduced-motion → static traces (not `/1`, `/2`, chooser math, or production apex)
