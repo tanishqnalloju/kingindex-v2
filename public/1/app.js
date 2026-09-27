@@ -399,7 +399,7 @@
         const cv = costVsHome(home.pli_us, dest.pli_us);
         el("destCard").innerHTML = `
           <h2>Destination · ${escapeHtml(dest.name)}</h2>
-          <div class="metric"><div class="k">× local median</div><div class="v" style="font-size:1.35rem">${fmtMultiple(r.multiple)}</div>
+          <div class="metric hero"><div class="k">× local median</div><div class="v">${fmtMultiple(r.multiple)}</div>
             <div class="s">${r.welfare_type || "—"} · PIP ${r.survey_year != null ? Math.round(r.survey_year) : "—"} · median $${fmtInt(r.median_ppp_annual)}/yr</div></div>
           <div class="metric"><div class="k">PPP equivalent (household)</div><div class="v">${fmtMoney(r.equiv, dest.currency, dest.iso3)}</div>
             <div class="s">Same PPP lifestyle</div></div>
@@ -410,7 +410,7 @@
       }
     } else {
       el("destCard").innerHTML = `<h2>Destination</h2>
-        <div class="metric"><div class="s">Pick a destination to see × median, PPP equivalent, FX, and cost vs home — or browse the table / lab map below.</div></div>`;
+        <div class="metric"><div class="s">Pick a destination to see × median, PPP equivalent, FX, and cost vs home - or browse the table / lab map below.</div></div>`;
     }
 
     const lead = `${fmtIncomeLead(incomeLocal, home.currency, home.iso3)} ${itype}`;
@@ -650,23 +650,25 @@
       return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
     } catch (_) { return "light"; }
   }
+  function syncThemeButtons(pref, resolved) {
+    document.querySelectorAll(".theme-seg [data-theme-pref]").forEach((btn) => {
+      const on = btn.getAttribute("data-theme-pref") === pref;
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    const btn = el("themeToggle");
+    if (btn) {
+      const next = resolved === "dark" ? "light" : "dark";
+      btn.setAttribute("aria-label", "Switch to " + next + " theme");
+      btn.setAttribute("aria-pressed", resolved === "dark" ? "true" : "false");
+    }
+  }
   function applyTheme(pref) {
     if (pref !== "light" && pref !== "dark" && pref !== "system") pref = "system";
     const resolved = resolveTheme(pref);
     document.documentElement.setAttribute("data-theme", resolved);
     document.documentElement.setAttribute("data-theme-pref", pref);
     try { localStorage.setItem("kingindex-v2-1-theme", pref); } catch (_) {}
-    const sel = el("themeSelect");
-    if (sel && sel.value !== pref) sel.value = pref;
-    const btn = el("themeToggle");
-    if (btn) {
-      const next = resolved === "dark" ? "light" : "dark";
-      btn.setAttribute("aria-label", "Switch to " + next + " theme");
-      btn.setAttribute("aria-pressed", resolved === "dark" ? "true" : "false");
-      const icon = btn.querySelector(".theme-icon"), label = btn.querySelector(".theme-label");
-      if (icon) icon.textContent = resolved === "dark" ? "☀" : "☾";
-      if (label) label.textContent = resolved === "dark" ? "Light" : "Dark";
-    }
+    syncThemeButtons(pref, resolved);
   }
   (function initTheme() {
     let t = "system";
@@ -685,9 +687,9 @@
       else if (mq.addListener) mq.addListener(onChange);
     } catch (_) {}
   })();
-  if (el("themeSelect")) {
-    el("themeSelect").addEventListener("change", () => applyTheme(el("themeSelect").value));
-  }
+  document.querySelectorAll(".theme-seg [data-theme-pref]").forEach((btn) => {
+    btn.addEventListener("click", () => applyTheme(btn.getAttribute("data-theme-pref")));
+  });
   if (el("themeToggle")) {
     el("themeToggle").addEventListener("click", () => {
       const cur = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
