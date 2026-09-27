@@ -15,7 +15,7 @@
 ## Visual system (not prod, not PPP Calculator)
 - Light: warm bone canvas `#f7f5f0` / ink `#1c1b18` / teal `#1f5c56`
 - Dark: Nord polar night surfaces (`#2E3440` family) with vivid frost/aurora
-  - Ink `#FFFFFF` / `#ECEFF4`; muted `#E5E9F0` / `#D8DEE9` (AA on `#2E3440`)
+  - Ink `#E6E8EC`; muted `#D8DEE9` (AA on `#292E39`)
   - Accents `#8FBCBB` / `#88C0D0`; hero × median `#A3BE8C`; emphasis gold `#EBCB8B`
 - Type: Outfit (UI/display) + IBM Plex Mono (numbers, `tabular-nums`)
 - Theme UI: segmented buttons Light | Dark | System + compact icon cycle toggle
